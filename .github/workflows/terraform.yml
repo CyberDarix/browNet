@@ -1,0 +1,22 @@
+name: Build browNet EXE
+on: [push]
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    - name: Install Dependencies
+      run: |
+        pip install pyinstaller PyQt6 qasync fastapi uvicorn aiohttp aiosqlite beautifulsoup4 lxml tldextract aiohttp_socks scikit-learn numpy joblib nltk
+    - name: Build EXE
+      run: |
+        python -m PyInstaller --onefile --noconsole --add-data "index.html;." app.py
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: browNet-Software
+        path: dist/app.py.exe
