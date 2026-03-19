@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>browNet · Navigateur souverain</title>
+    <!-- Police Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(145deg, #5a3d9c 0%, #8a6de9 100%);
+            color: #ffffff;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Navigation */
+        nav {
+            padding: 2rem 0 1rem;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: white;
+        }
+
+        .logo svg {
+            width: 40px;
+            height: 40px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .lang-selector {
+            position: relative;
+            display: inline-block;
+        }
+
+        .lang-selector select {
+            appearance: none;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 30px;
+            padding: 0.5rem 2rem 0.5rem 1.2rem;
+            color: white;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            outline: none;
+            transition: background 0.2s;
+        }
+
+        .lang-selector select:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .lang-selector::after {
+            content: "▼";
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.8);
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .lang-selector option {
+            background: #2a1f42;
+            color: white;
+        }
+
+        .nav-links .install {
+            background: rgba(255,255,255,0.15);
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+
+        .nav-links .install:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        /* Hero */
+        .hero {
+            display: flex;
+            align-items: center;
+            padding: 3rem 0 5rem;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 span {
+            display: block;
+            font-weight: 400;
+            font-size: 0.9em;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            color: rgba(255,255,255,0.9);
+            max-width: 600px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: white;
+            color: #5a3d9c;
+            font-weight: 600;
+            padding: 1rem 2.5rem;
+            border-radius: 60px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+
+        /* Sections */
+        .section {
+            padding: 4rem 0;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        /* Grille confidentialité */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem 4rem;
+        }
+
+        .feature-item {
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 1.5rem;
+        }
+
+        .feature-item h3 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            color: white;
+        }
+
+        .feature-item p {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 1rem;
+        }
+
+        .feature-item .small-desc {
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.8);
+            line-height: 1.6;
+        }
+
+        /* Section changement facile */
+        .change-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        .change-left h2 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        .change-left h2 span {
+            display: block;
+            font-size: 2rem;
+            font-weight: 400;
+            color: rgba(255,255,255,0.8);
+            margin-top: 0.5rem;
+        }
+
+        .change-left p {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.9);
+            margin: 1.5rem 0 2rem;
+            max-width: 500px;
+        }
+
+        .change-left .privacy-link {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.95rem;
+            text-decoration: underline;
+            margin-top: 1rem;
+            display: inline-block;
+        }
+
+        .change-right {
+            background: rgba(255,255,255,0.05);
+            border-radius: 30px;
+            padding: 2.5rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .step-item {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            align-items: flex-start;
+        }
+
+        .step-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            background: rgba(255,255,255,0.15);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .step-text {
+            font-size: 1.1rem;
+            color: white;
+            font-weight: 500;
+        }
+
+        .step-text small {
+            display: block;
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.8);
+            font-weight: 400;
+            margin-top: 0.3rem;
+        }
+
+        /* Nouvelle section : protection automatique */
+        .protection-section {
+            background: rgba(255,255,255,0.03);
+            border-radius: 40px;
+            padding: 4rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .protection-section h2 {
+            font-size: 3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .protection-section p {
+            font-size: 1.3rem;
+            color: rgba(255,255,255,0.9);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .protection-section hr {
+            width: 100px;
+            margin: 2rem auto;
+            border: none;
+            height: 1px;
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            padding: 3rem 0 2rem;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-col h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-col a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .footer-col a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.6);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-lang a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: underline;
+        }
+
+        /* Animations */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Adaptation mobile */
+        @media (max-width: 900px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .change-section {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            .protection-section {
+                padding: 2rem;
+            }
+            .protection-section h2 {
+                font-size: 2.2rem;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .nav-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1.5rem;
+            }
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav>
+            <div class="nav-content">
+                <div class="logo">
+                    <!-- Logo iceberg -->
+                    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 2L4 12V28L20 38L36 28V12L20 2Z" fill="url(#gradient)" stroke="white" stroke-width="1.2"/>
+                        <path d="M20 2L12 12L20 22L28 12L20 2Z" fill="url(#top)" fill-opacity="0.6"/>
+                        <path d="M4 12L12 12L20 22L12 32L4 28V12Z" fill="url(#left)" fill-opacity="0.4"/>
+                        <path d="M36 12L28 12L20 22L28 32L36 28V12Z" fill="url(#right)" fill-opacity="0.4"/>
+                        <path d="M12 32L20 38L28 32L20 22L12 32Z" fill="url(#bottom)" fill-opacity="0.3"/>
+                        <defs>
+                            <linearGradient id="gradient" x1="4" y1="2" x2="36" y2="38" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#ffffff"/>
+                                <stop offset="0.5" stop-color="#d9c9ff"/>
+                                <stop offset="1" stop-color="#b79eff"/>
+                            </linearGradient>
+                            <linearGradient id="top" x1="12" y1="2" x2="28" y2="22"><stop stop-color="#ffffff" stop-opacity="0.9"/><stop offset="1" stop-color="#d9c9ff" stop-opacity="0.3"/></linearGradient>
+                            <linearGradient id="left" x1="4" y1="12" x2="20" y2="32"><stop stop-color="#b79eff" stop-opacity="0.5"/><stop offset="1" stop-color="#6d4fc7" stop-opacity="0.2"/></linearGradient>
+                            <linearGradient id="right" x1="36" y1="12" x2="20" y2="32"><stop stop-color="#b79eff" stop-opacity="0.5"/><stop offset="1" stop-color="#6d4fc7" stop-opacity="0.2"/></linearGradient>
+                            <linearGradient id="bottom" x1="12" y1="32" x2="28" y2="38"><stop stop-color="#4b2f9f" stop-opacity="0.4"/><stop offset="1" stop-color="#2a1a5e" stop-opacity="0.6"/></linearGradient>
+                        </defs>
+                    </svg>
+                    browNet
+                </div>
+                <div class="nav-links">
+                    <div class="lang-selector">
+                        <select name="lang" id="lang">
+                            <option value="fr">Français</option>
+                            <option value="en">English</option>
+                            <option value="es">Español</option>
+                            <option value="de">Deutsch</option>
+                            <option value="it">Italiano</option>
+                            <option value="pt">Português</option>
+                            <option value="zh">中文</option>
+                            <option value="ja">日本語</option>
+                            <option value="ar">العربية</option>
+                            <option value="hi">हिन्दी</option>
+                            <option value="ru">Русский</option>
+                        </select>
+                    </div>
+                    <a href="browNet_install.zip" class="install" download data-i18n="install">Installer browNet</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1 class="fade-up">
+                    <span data-i18n="hero_title1">Un meilleur Internet existe.</span><br>
+                    <span data-i18n="hero_title2">browNet vous y emmène.</span>
+                </h1>
+                <p class="fade-up" data-i18n="hero_desc">
+                    Le web a été pensé pour élargir votre horizon. Pas le limiter.<br>
+                    browNet vous aide à faire d'Internet un espace vraiment personnel où c'est vous qui avez le contrôle.
+                </p>
+                <div class="fade-up">
+                    <a href="browNet_install.zip" class="btn" download data-i18n="download_hero">Télécharger browNet</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section confidentialité -->
+        <section class="section">
+            <h2 class="section-title fade-up" data-i18n="privacy_title">La confidentialité par défaut</h2>
+            <div class="features-grid">
+                <!-- Vie privée -->
+                <div class="feature-item fade-up">
+                    <h3 data-i18n="privacy_vie_privee">VIE PRIVÉE</h3>
+                    <p class="small-desc" data-i18n="privacy_vie_desc">
+                        Bloque automatiquement les traqueurs. Sans configurations. Et sans hésitations.
+                    </p>
+                </div>
+                <!-- Concentration -->
+                <div class="feature-item fade-up">
+                    <h3 data-i18n="privacy_concentration">CONCENTRATION</h3>
+                    <p data-i18n="privacy_concentration_p">Une meilleure concentration. Moins de distractions.</p>
+                    <p class="small-desc" data-i18n="privacy_concentration_desc">
+                        Restez concentré·e avec les groupes d’onglets, le mode lecteur et les vidéos qui restent toujours bien visibles.
+                    </p>
+                </div>
+                <!-- Choix -->
+                <div class="feature-item fade-up">
+                    <h3 data-i18n="privacy_choix">CHOIX</h3>
+                    <p data-i18n="privacy_choix_p">Le contrôle et le choix. Intégrés.</p>
+                    <p class="small-desc" data-i18n="privacy_choix_desc">
+                        Personnalisez la façon dont l’IA interagit avec vous ou désactivez-la totalement.
+                    </p>
+                </div>
+                <!-- Indépendance -->
+                <div class="feature-item fade-up">
+                    <h3 data-i18n="privacy_independance">INDÉPENDANCE</h3>
+                    <p data-i18n="privacy_independance_p">Nous n’avons aucun actionnaire à satisfaire.</p>
+                    <p class="small-desc" data-i18n="privacy_independance_desc">
+                        Nous ne vendons pas et ne vendrons jamais vos données personnelles.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section : changement facile -->
+        <section class="section change-section">
+            <div class="change-left fade-up">
+                <h2>
+                    <span data-i18n="change_title1">Un changement rapide.</span><br>
+                    <span data-i18n="change_title2">Une adaptation facile.</span>
+                </h2>
+                <p data-i18n="change_desc">
+                    Quand vous passez à browNet, vos favoris, mots de passe et votre historique sont automatiquement importés pour vous permettre de reprendre immédiatement là où vous en étiez.
+                </p>
+                <a href="browNet_install.zip" class="btn" download data-i18n="download_change">Télécharger browNet</a>
+                <a href="#" class="privacy-link" data-i18n="privacy_policy">Politique de confidentialité de browNet</a>
+            </div>
+            <div class="change-right fade-up">
+                <div class="step-item">
+                    <div class="step-number">01</div>
+                    <div class="step-text" data-i18n="step1">
+                        Télécharger browNet
+                        <small data-i18n="step1_small">Choisissez votre version</small>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">02</div>
+                    <div class="step-text" data-i18n="step2">
+                        Choisissez tout ce que vous souhaitez emporter avec vous
+                        <small data-i18n="step2_small">Favoris, mots de passe, historique</small>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">03</div>
+                    <div class="step-text" data-i18n="step3">
+                        Cliquez pour importer
+                        <small data-i18n="step3_small">Et c'est prêt !</small>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section : protection automatique -->
+        <section class="section protection-section fade-up">
+            <h2 data-i18n="protection_title">Protégez votre vie privée<br>sans devoir y penser</h2>
+            <p data-i18n="protection_desc">
+                browNet protège automatiquement votre vie privée grâce au blocage des traqueurs intégré dès votre première utilisation. Résultat : votre protection est assurée par défaut, sans configuration supplémentaire.
+            </p>
+            <hr>
+        </section>
+    </div>
+
+    <!-- Footer complet -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4 data-i18n="footer_download">Télécharger</h4>
+                    <ul>
+                        <li><a href="browNet_install.zip" download data-i18n="footer_download_main">Télécharger browNet</a></li>
+                        <li><a href="#" data-i18n="windows">Windows</a></li>
+                        <li><a href="#" data-i18n="macos">macOS</a></li>
+                        <li><a href="#" data-i18n="ios">iOS</a></li>
+                        <li><a href="#" data-i18n="android">Android</a></li>
+                        <li><a href="#" data-i18n="linux">Linux</a></li>
+                        <li><a href="#" data-i18n="custom_options">Options personnalisées</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4 data-i18n="footer_versions">Dernières versions</h4>
+                    <ul>
+                        <li><a href="#" data-i18n="nightly">Nightly</a></li>
+                        <li><a href="#" data-i18n="beta">Beta</a></li>
+                        <li><a href="#" data-i18n="enterprise">browNet Entreprise</a></li>
+                        <li><a href="#" data-i18n="business">Entreprise</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4 data-i18n="footer_community">Communauté</h4>
+                    <ul>
+                        <li><a href="#" data-i18n="community_connect">Communiquer</a></li>
+                        <li><a href="#" data-i18n="community_contribute">Contribuer</a></li>
+                        <li><a href="#" data-i18n="community_dev">Développeurs</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4 data-i18n="footer_resources">Ressources</h4>
+                    <ul>
+                        <li><a href="#" data-i18n="resources_compare">Comparer</a></li>
+                        <li><a href="#" data-i18n="resources_notes">Notes de mise à jour</a></li>
+                        <li><a href="#" data-i18n="resources_learn">Apprendre</a></li>
+                        <li><a href="#" data-i18n="resources_support">Assistance</a></li>
+                        <li><a href="#" data-i18n="resources_addons">Modules complémentaires</a></li>
+                        <li><a href="#" data-i18n="resources_blog">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4 data-i18n="footer_follow">Suivez-nous</h4>
+                    <ul>
+                        <li><a href="#" data-i18n="follow_instagram">Instagram</a></li>
+                        <li><a href="#" data-i18n="follow_youtube">YouTube</a></li>
+                        <li><a href="#" data-i18n="follow_tiktok">TikTok</a></li>
+                        <li><a href="#" data-i18n="follow_bluesky">Bluesky</a></li>
+                        <li><a href="#" data-i18n="follow_podcast">Podcast</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-lang">
+                    <span data-i18n="lang_fr">Français</span> · <span data-i18n="made_by">Conçu par browNet</span> · <a href="#" data-i18n="contact">Posez-nous vos questions !</a>
+                </div>
+                <div class="footer-copyright" data-i18n="copyright">
+                    © 2026 browNet. Tous droits réservés.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Script pour animations au scroll + traductions -->
+    <script>
+        // Dictionnaire de traductions
+        const translations = {
+            fr: {
+                install: "Installer browNet",
+                hero_title1: "Un meilleur Internet existe.",
+                hero_title2: "browNet vous y emmène.",
+                hero_desc: "Le web a été pensé pour élargir votre horizon. Pas le limiter.<br>browNet vous aide à faire d'Internet un espace vraiment personnel où c'est vous qui avez le contrôle.",
+                download_hero: "Télécharger browNet",
+                privacy_title: "La confidentialité par défaut",
+                privacy_vie_privee: "VIE PRIVÉE",
+                privacy_vie_desc: "Bloque automatiquement les traqueurs. Sans configurations. Et sans hésitations.",
+                privacy_concentration: "CONCENTRATION",
+                privacy_concentration_p: "Une meilleure concentration. Moins de distractions.",
+                privacy_concentration_desc: "Restez concentré·e avec les groupes d’onglets, le mode lecteur et les vidéos qui restent toujours bien visibles.",
+                privacy_choix: "CHOIX",
+                privacy_choix_p: "Le contrôle et le choix. Intégrés.",
+                privacy_choix_desc: "Personnalisez la façon dont l’IA interagit avec vous ou désactivez-la totalement.",
+                privacy_independance: "INDÉPENDANCE",
+                privacy_independance_p: "Nous n’avons aucun actionnaire à satisfaire.",
+                privacy_independance_desc: "Nous ne vendons pas et ne vendrons jamais vos données personnelles.",
+                change_title1: "Un changement rapide.",
+                change_title2: "Une adaptation facile.",
+                change_desc: "Quand vous passez à browNet, vos favoris, mots de passe et votre historique sont automatiquement importés pour vous permettre de reprendre immédiatement là où vous en étiez.",
+                download_change: "Télécharger browNet",
+                privacy_policy: "Politique de confidentialité de browNet",
+                step1: "Télécharger browNet",
+                step1_small: "Choisissez votre version",
+                step2: "Choisissez tout ce que vous souhaitez emporter avec vous",
+                step2_small: "Favoris, mots de passe, historique",
+                step3: "Cliquez pour importer",
+                step3_small: "Et c'est prêt !",
+                protection_title: "Protégez votre vie privée<br>sans devoir y penser",
+                protection_desc: "browNet protège automatiquement votre vie privée grâce au blocage des traqueurs intégré dès votre première utilisation. Résultat : votre protection est assurée par défaut, sans configuration supplémentaire.",
+                footer_download: "Télécharger",
+                footer_download_main: "Télécharger browNet",
+                windows: "Windows",
+                macos: "macOS",
+                ios: "iOS",
+                android: "Android",
+                linux: "Linux",
+                custom_options: "Options personnalisées",
+                footer_versions: "Dernières versions",
+                nightly: "Nightly",
+                beta: "Beta",
+                enterprise: "browNet Entreprise",
+                business: "Entreprise",
+                footer_community: "Communauté",
+                community_connect: "Communiquer",
+                community_contribute: "Contribuer",
+                community_dev: "Développeurs",
+                footer_resources: "Ressources",
+                resources_compare: "Comparer",
+                resources_notes: "Notes de mise à jour",
+                resources_learn: "Apprendre",
+                resources_support: "Assistance",
+                resources_addons: "Modules complémentaires",
+                resources_blog: "Blog",
+                footer_follow: "Suivez-nous",
+                follow_instagram: "Instagram",
+                follow_youtube: "YouTube",
+                follow_tiktok: "TikTok",
+                follow_bluesky: "Bluesky",
+                follow_podcast: "Podcast",
+                lang_fr: "Français",
+                made_by: "Conçu par browNet",
+                contact: "Posez-nous vos questions !",
+                copyright: "© 2026 browNet. Tous droits réservés."
+            },
+            en: {
+                install: "Install browNet",
+                hero_title1: "A better Internet exists.",
+                hero_title2: "browNet takes you there.",
+                hero_desc: "The web was designed to broaden your horizons. Not limit them.<br>browNet helps you make the Internet a truly personal space where you are in control.",
+                download_hero: "Download browNet",
+                privacy_title: "Privacy by default",
+                privacy_vie_privee: "PRIVACY",
+                privacy_vie_desc: "Automatically blocks trackers. No setup. No hesitation.",
+                privacy_concentration: "FOCUS",
+                privacy_concentration_p: "Better focus. Fewer distractions.",
+                privacy_concentration_desc: "Stay focused with tab groups, reader mode, and videos that always stay visible.",
+                privacy_choix: "CHOICE",
+                privacy_choix_p: "Control and choice. Built in.",
+                privacy_choix_desc: "Customize how AI interacts with you or turn it off completely.",
+                privacy_independance: "INDEPENDENCE",
+                privacy_independance_p: "We have no shareholders to please.",
+                privacy_independance_desc: "We do not and will never sell your personal data.",
+                change_title1: "A quick change.",
+                change_title2: "Easy adaptation.",
+                change_desc: "When you switch to browNet, your bookmarks, passwords, and history are automatically imported so you can pick up right where you left off.",
+                download_change: "Download browNet",
+                privacy_policy: "browNet Privacy Policy",
+                step1: "Download browNet",
+                step1_small: "Choose your version",
+                step2: "Choose what to bring with you",
+                step2_small: "Bookmarks, passwords, history",
+                step3: "Click to import",
+                step3_small: "And you're ready!",
+                protection_title: "Protect your privacy<br>without thinking about it",
+                protection_desc: "browNet automatically protects your privacy with built‑in tracker blocking from your very first use. Result: your protection is on by default, no extra setup needed.",
+                footer_download: "Download",
+                footer_download_main: "Download browNet",
+                windows: "Windows",
+                macos: "macOS",
+                ios: "iOS",
+                android: "Android",
+                linux: "Linux",
+                custom_options: "Custom options",
+                footer_versions: "Latest versions",
+                nightly: "Nightly",
+                beta: "Beta",
+                enterprise: "browNet Enterprise",
+                business: "Business",
+                footer_community: "Community",
+                community_connect: "Connect",
+                community_contribute: "Contribute",
+                community_dev: "Developers",
+                footer_resources: "Resources",
+                resources_compare: "Compare",
+                resources_notes: "Release notes",
+                resources_learn: "Learn",
+                resources_support: "Support",
+                resources_addons: "Add‑ons",
+                resources_blog: "Blog",
+                footer_follow: "Follow us",
+                follow_instagram: "Instagram",
+                follow_youtube: "YouTube",
+                follow_tiktok: "TikTok",
+                follow_bluesky: "Bluesky",
+                follow_podcast: "Podcast",
+                lang_fr: "French",
+                made_by: "Made by browNet",
+                contact: "Ask us anything!",
+                copyright: "© 2026 browNet. All rights reserved."
+            },
+            es: {
+                install: "Instalar browNet",
+                hero_title1: "Existe un Internet mejor.",
+                hero_title2: "browNet te lleva allí.",
+                hero_desc: "La web fue diseñada para ampliar tus horizontes. No para limitarlos.<br>browNet te ayuda a hacer de Internet un espacio verdaderamente personal donde tú tienes el control.",
+                download_hero: "Descargar browNet",
+                privacy_title: "Privacidad por defecto",
+                privacy_vie_privee: "PRIVACIDAD",
+                privacy_vie_desc: "Bloquea automáticamente los rastreadores. Sin configuración. Sin dudas.",
+                privacy_concentration: "CONCENTRACIÓN",
+                privacy_concentration_p: "Mejor concentración. Menos distracciones.",
+                privacy_concentration_desc: "Mantente concentrado con grupos de pestañas, modo lectura y vídeos que siempre permanecen visibles.",
+                privacy_choix: "ELECCIÓN",
+                privacy_choix_p: "Control y elección. Integrados.",
+                privacy_choix_desc: "Personaliza cómo interactúa la IA contigo o desactívala por completo.",
+                privacy_independance: "INDEPENDENCIA",
+                privacy_independance_p: "No tenemos accionistas a los que complacer.",
+                privacy_independance_desc: "No vendemos ni venderemos nunca tus datos personales.",
+                change_title1: "Un cambio rápido.",
+                change_title2: "Adaptación fácil.",
+                change_desc: "Cuando cambies a browNet, tus marcadores, contraseñas e historial se importan automáticamente para que puedas retomar donde lo dejaste.",
+                download_change: "Descargar browNet",
+                privacy_policy: "Política de privacidad de browNet",
+                step1: "Descargar browNet",
+                step1_small: "Elige tu versión",
+                step2: "Elige qué quieres traer contigo",
+                step2_small: "Marcadores, contraseñas, historial",
+                step3: "Haz clic para importar",
+                step3_small: "¡Y listo!",
+                protection_title: "Protege tu privacidad<br>sin pensar en ello",
+                protection_desc: "browNet protege automáticamente tu privacidad con el bloqueo de rastreadores integrado desde el primer uso. Resultado: tu protección está activada por defecto, sin configuración adicional.",
+                footer_download: "Descargar",
+                footer_download_main: "Descargar browNet",
+                windows: "Windows",
+                macos: "macOS",
+                ios: "iOS",
+                android: "Android",
+                linux: "Linux",
+                custom_options: "Opciones personalizadas",
+                footer_versions: "Últimas versiones",
+                nightly: "Nightly",
+                beta: "Beta",
+                enterprise: "browNet Enterprise",
+                business: "Empresa",
+                footer_community: "Comunidad",
+                community_connect: "Conectar",
+                community_contribute: "Contribuir",
+                community_dev: "Desarrolladores",
+                footer_resources: "Recursos",
+                resources_compare: "Comparar",
+                resources_notes: "Notas de lanzamiento",
+                resources_learn: "Aprender",
+                resources_support: "Soporte",
+                resources_addons: "Complementos",
+                resources_blog: "Blog",
+                footer_follow: "Síguenos",
+                follow_instagram: "Instagram",
+                follow_youtube: "YouTube",
+                follow_tiktok: "TikTok",
+                follow_bluesky: "Bluesky",
+                follow_podcast: "Podcast",
+                lang_fr: "Francés",
+                made_by: "Hecho por browNet",
+                contact: "¡Pregúntanos!",
+                copyright: "© 2026 browNet. Todos los derechos reservados."
+            },
+            de: {
+                install: "browNet installieren",
+                hero_title1: "Ein besseres Internet existiert.",
+                hero_title2: "browNet bringt dich dorthin.",
+                hero_desc: "Das Internet wurde geschaffen, um deinen Horizont zu erweitern, nicht um ihn einzuschränken.<br>browNet hilft dir, das Internet zu einem wirklich persönlichen Raum zu machen, in dem du die Kontrolle hast.",
+                download_hero: "browNet herunterladen",
+                privacy_title: "Datenschutz standardmäßig",
+                privacy_vie_privee: "DATENSCHUTZ",
+                privacy_vie_desc: "Blockiert automatisch Tracker. Ohne Konfiguration. Ohne Zögern.",
+                privacy_concentration: "KONZENTRATION",
+                privacy_concentration_p: "Bessere Konzentration. Weniger Ablenkungen.",
+                privacy_concentration_desc: "Bleib konzentriert mit Tab-Gruppen, Lesemodus und Videos, die immer gut sichtbar bleiben.",
+                privacy_choix: "WAHL",
+                privacy_choix_p: "Kontrolle und Wahl. Integriert.",
+                privacy_choix_desc: "Passe an, wie die KI mit dir interagiert, oder deaktiviere sie ganz.",
+                privacy_independance: "UNABHÄNGIGKEIT",
+                privacy_independance_p: "Wir haben keine Aktionäre, die wir zufriedenstellen müssen.",
+                privacy_independance_desc: "Wir verkaufen deine persönlichen Daten nicht und werden es nie tun.",
+                change_title1: "Schneller Wechsel.",
+                change_title2: "Einfache Anpassung.",
+                change_desc: "Wenn du zu browNet wechselst, werden deine Lesezeichen, Passwörter und dein Verlauf automatisch importiert, sodass du nahtlos dort weitermachen kannst, wo du aufgehört hast.",
+                download_change: "browNet herunterladen",
+                privacy_policy: "Datenschutzerklärung von browNet",
+                step1: "browNet herunterladen",
+                step1_small: "Wähle deine Version",
+                step2: "Wähle, was du mitnehmen möchtest",
+                step2_small: "Lesezeichen, Passwörter, Verlauf",
+                step3: "Klicke zum Importieren",
+                step3_small: "Und fertig!",
+                protection_title: "Schütze deine Privatsphäre,<br>ohne darüber nachzudenken",
+                protection_desc: "browNet schützt deine Privatsphäre automatisch mit integrierter Tracker-Blockierung von der ersten Nutzung an. Ergebnis: Dein Schutz ist standardmäßig aktiv, ohne zusätzliche Einrichtung.",
+                footer_download: "Herunterladen",
+                footer_download_main: "browNet herunterladen",
+                windows: "Windows",
+                macos: "macOS",
+                ios: "iOS",
+                android: "Android",
+                linux: "Linux",
+                custom_options: "Benutzerdefinierte Optionen",
+                footer_versions: "Neueste Versionen",
+                nightly: "Nightly",
+                beta: "Beta",
+                enterprise: "browNet Enterprise",
+                business: "Unternehmen",
+                footer_community: "Community",
+                community_connect: "Kontakt",
+                community_contribute: "Mitwirken",
+                community_dev: "Entwickler",
+                footer_resources: "Ressourcen",
+                resources_compare: "Vergleichen",
+                resources_notes: "Versionshinweise",
+                resources_learn: "Lernen",
+                resources_support: "Support",
+                resources_addons: "Erweiterungen",
+                resources_blog: "Blog",
+                footer_follow: "Folge uns",
+                follow_instagram: "Instagram",
+                follow_youtube: "YouTube",
+                follow_tiktok: "TikTok",
+                follow_bluesky: "Bluesky",
+                follow_podcast: "Podcast",
+                lang_fr: "Französisch",
+                made_by: "Erstellt von browNet",
+                contact: "Frag uns!",
+                copyright: "© 2026 browNet. Alle Rechte vorbehalten."
+            }
+            // On pourrait ajouter d'autres langues de la même manière (it, pt, zh, ja, ar, hi, ru)
+            // Pour simplifier, on ne mettra que quelques exemples, mais le principe est là.
+        };
+
+        // Fonction pour changer la langue
+        function setLanguage(lang) {
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    // Gérer les balises <br> éventuelles
+                    el.innerHTML = translations[lang][key];
+                } else if (translations['fr'] && translations['fr'][key]) {
+                    // Fallback français
+                    el.innerHTML = translations['fr'][key];
+                }
+            });
+        }
+
+        // Initialisation au chargement (forcer français)
+        document.addEventListener('DOMContentLoaded', () => {
+            setLanguage('fr');
+        });
+
+        // Écouteur sur le sélecteur de langue
+        const langSelect = document.getElementById('lang');
+        langSelect.addEventListener('change', (e) => {
+            setLanguage(e.target.value);
+        });
+
+        // Animations au scroll (copie de l'existant)
+        const fadeElements = document.querySelectorAll('.fade-up');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.2, rootMargin: '0px 0px -50px 0px' });
+        fadeElements.forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>
