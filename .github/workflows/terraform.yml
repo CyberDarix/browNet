@@ -12,10 +12,10 @@ jobs:
       with:
         python-version: '3.10'
 
-    - name: Install Dependencies
+    - name: Install All Dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pyinstaller PyQt6 qasync fastapi uvicorn aiohttp aiosqlite beautifulsoup4 lxml tldextract aiohttp_socks scikit-learn numpy joblib nltk language_tool_python
+        pip install pyinstaller PyQt6 qasync fastapi uvicorn aiohttp aiosqlite beautifulsoup4 lxml tldextract aiohttp_socks scikit-learn numpy joblib nltk language_tool_python aiofiles requests
 
     - name: Build EXE
       run: |
