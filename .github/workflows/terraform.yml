@@ -1,27 +1,32 @@
-nom: Générer browNet EXE
-sur: [pousser]
+name: Build browNet EXE
+on: [push]
 
-emplois:
-  construire:
-    continue sur: windows-latest
-    mesures:
-      - utilise: actions/checkout@v4
-      - nom: Installer Python
-        utilise: actions/setup-python@v5
-        avec:
-          version de Python: '3.10'
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
 
-      - nom: Installer toutes les dépendances
-        courir: |
-          python -m pip install --upgrade pip
-          pip install pyinstaller PyQt6 PyQt6-WebEngine qasync fastapi uvicorn aiohttp aiosqlite beautifulsoup4 lxml tldextract aiohttp_socks scikit-learn numpy joblib nltk language_tool_python aiofiles requests cachetools google-re2 python-magic
+    - name: Installer Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
 
-      - nom: Générer EXE
-        courir: |
-          python -m PyInstaller --onefile --noconsole --clean --add-data "index.html;." --name "browNet" app.py
+    - name: Installer les dépendances système et IA
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller PyQt6 PyQt6-WebEngine qasync fastapi uvicorn aiohttp aiosqlite beautifulsoup4 lxml tldextract aiohttp_socks scikit-learn numpy joblib nltk language_tool_python aiofiles requests cachetools google-re2 python-magic
 
-      - nom: Télécharger l'artefact
-        utilise: actions/upload-artifact@v4
-        avec:
-          name: logiciel-browNet
-          path: dist/*.exe
+    - name: Télécharger les données NLTK (Nécessaire pour ton code)
+      run: |
+        python -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"
+
+    - name: Générer l'EXE (Build Final)
+      run: |
+        python -m PyInstaller --onefile --noconsole --clean --add-data "index.html;." --name "browNet" app.py
+
+    - name: Télécharger le logiciel fini
+      uses: actions/upload-artifact@v4
+      with:
+        name: logiciel-browNet-Complet
+        path: dist/*.exe
